@@ -26,11 +26,19 @@ var init = function () {
 if (loaded) return;
 loaded = true;
 var mobile = window.isDevice;
-var koef = mobile ? 0.5 : 1;
+// scale canvas for high-DPI (retina) displays to avoid blurriness on mobile
+var DPR = window.devicePixelRatio || 1;
 var canvas = document.getElementById('heart');
 var ctx = canvas.getContext('2d');
-var width = canvas.width = koef * innerWidth;
-var height = canvas.height = koef * innerHeight;
+var cssWidth = innerWidth;
+var cssHeight = innerHeight;
+canvas.style.width = cssWidth + 'px';
+canvas.style.height = cssHeight + 'px';
+canvas.width = Math.floor(cssWidth * DPR);
+canvas.height = Math.floor(cssHeight * DPR);
+ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+var width = cssWidth;
+var height = cssHeight;
 var rand = Math.random;
 ctx.fillStyle = "rgba(0,0,0,1)";
 ctx.fillRect(0, 0, width, height);
@@ -47,8 +55,15 @@ var scaleAndTranslate = function (pos, sx, sy, dx, dy) {
 };
 
 window.addEventListener('resize', function () {
-    width = canvas.width = koef * innerWidth;
-    height = canvas.height = koef * innerHeight;
+    cssWidth = innerWidth;
+    cssHeight = innerHeight;
+    canvas.style.width = cssWidth + 'px';
+    canvas.style.height = cssHeight + 'px';
+    canvas.width = Math.floor(cssWidth * DPR);
+    canvas.height = Math.floor(cssHeight * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    width = cssWidth;
+    height = cssHeight;
     ctx.fillStyle = "rgba(0,0,0,1)";
     ctx.fillRect(0, 0, width, height);
 });
