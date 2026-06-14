@@ -66,19 +66,31 @@ window.addEventListener('resize', function () {
     height = cssHeight;
     ctx.fillStyle = "rgba(0,0,0,1)";
     ctx.fillRect(0, 0, width, height);
+    buildHeartPoints();
+    pulse(1, 1);
 });
 
-// fewer trace points on mobile for clarity and performance
-var traceCount = mobile ? 12 : 50;
+// heart detail and density
+var traceCount = mobile ? 6 : 18;
 var pointsOrigin = [];
 var i;
-var dr = mobile ? 0.3 : 0.1;
-for (i = 0; i < Math.PI * 2; i += dr) 
-pointsOrigin.push(scaleAndTranslate(heartPosition(i), 210, 13, 0, 0));
-for (i = 0; i < Math.PI * 2; i += dr) 
-pointsOrigin.push(scaleAndTranslate(heartPosition(i), 150, 9, 0, 0));
-for (i = 0; i < Math.PI * 2; i += dr) 
-pointsOrigin.push(scaleAndTranslate(heartPosition(i), 90, 5, 0, 0));
+var pointStep = mobile ? 0.14 : 0.08;
+var heartScale = mobile ? 0.18 : 0.26;
+var heartHeightFactor = mobile ? 0.09 : 0.085;
+
+function buildHeartPoints() {
+    pointsOrigin = [];
+    var heartWidth = Math.min(width, height) * heartScale;
+    var heartHeight = heartWidth * heartHeightFactor;
+    for (i = 0; i < Math.PI * 2; i += pointStep)
+        pointsOrigin.push(scaleAndTranslate(heartPosition(i), heartWidth, heartHeight, 0, 0));
+    for (i = 0; i < Math.PI * 2; i += pointStep)
+        pointsOrigin.push(scaleAndTranslate(heartPosition(i), heartWidth * 0.72, heartHeight * 0.72, 0, 0));
+    for (i = 0; i < Math.PI * 2; i += pointStep)
+        pointsOrigin.push(scaleAndTranslate(heartPosition(i), heartWidth * 0.44, heartHeight * 0.44, 0, 0));
+}
+
+buildHeartPoints();
 var heartPointsCount = pointsOrigin.length;
 
 var targetPoints = [];
@@ -94,33 +106,40 @@ var e = [];
 for (i = 0; i < heartPointsCount; i++) {
     var x = rand() * width;
     var y = rand() * height;
+    var hue = 8 + ~~(rand() * 8); // richer red family
     e[i] = {
         vx: 0,
         vy: 0,
         // particle visual radius (in CSS pixels)
-        R: mobile ? (1.6 + Math.min(1, DPR - 1)) : 1.2,
-        speed: rand() + 5,
+        R: mobile ? (1.2 + Math.min(1, DPR - 1)) : 1.5,
+        speed: rand() * 1.2 + 3.8,
         q: ~~(rand() * heartPointsCount),
         D: 2 * (i % 2) - 1,
-        force: 0.2 * rand() + 0.7,
-        f: "hsla(0," + ~~(40 * rand() + 60) + "%," + ~~(60 * rand() + 20) + "%,.3)",
+        force: 0.7 + rand() * 0.12,
+        f: "hsla(" + hue + ", 88%, " + (36 + ~~(rand() * 10)) + "%, .32)",
         trace: []
     };
     for (var k = 0; k < traceCount; k++) e[i].trace[k] = {x: x, y: y};
 }
 
 var config = {
-    traceK: 0.4,
-    timeDelta: 0.01
+    traceK: mobile ? 0.24 : 0.32,
+    timeDelta: mobile ? 0.0072 : 0.01
 };
 
 var time = 0;
 var loop = function () {
     var n = -Math.cos(time);
     pulse((1 + n) * .5, (1 + n) * .5);
-    time += ((Math.sin(time)) < 0 ? 9 : (n > 0.8) ? .2 : 1) * config.timeDelta;
-    ctx.fillStyle = "rgba(0,0,0,.1)";
+    time += ((Math.sin(time)) < 0 ? 9 : (n > 0.8) ? .35 : 1) * config.timeDelta;
+    ctx.fillStyle = "rgba(0,0,0,.16)";
     ctx.fillRect(0, 0, width, height);
+    var glow = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, height * 0.45);
+    glow.addColorStop(0, 'rgba(170, 16, 24, 0.14)');
+    glow.addColorStop(0.55, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, width, height);
+    ctx.globalCompositeOperation = 'source-over';
     for (i = e.length; i--;) {
         var u = e[i];
         var q = targetPoints[u.q];
@@ -142,8 +161,10 @@ var loop = function () {
                 }
             }
         }
-        u.vx += -dx / length * u.speed;
-        u.vy += -dy / length * u.speed;
+        if (length > 0.25) {
+            u.vx += -dx / length * u.speed * 0.46;
+            u.vy += -dy / length * u.speed * 0.46;
+        }
         u.trace[0].x += u.vx;
         u.trace[0].y += u.vy;
         u.vx *= u.force;
@@ -158,10 +179,11 @@ var loop = function () {
         for (k = 0; k < u.trace.length; k++) {
             var px = u.trace[k].x;
             var py = u.trace[k].y;
-            var size = Math.max(1, Math.round(u.R));
+            var size = Math.max(1.6, Math.round(u.R * (1 + (u.trace.length - k) * 0.05)));
             ctx.fillRect(px - size / 2, py - size / 2, size, size);
         }
     }
+    ctx.globalCompositeOperation = 'source-over';
     //ctx.fillStyle = "rgba(255,255,255,1)";
     //for (i = u.trace.length; i--;) ctx.fillRect(targetPoints[i][0], targetPoints[i][1], 2, 2);
 
@@ -176,22 +198,53 @@ loop();
     if(!loveEl) return;
     var popping = false;
     loveEl.style.transition = 'transform .28s ease, filter .28s ease';
+
+    function createFallingHeart(x, y, index) {
+        var h = document.createElement('div');
+        h.textContent = '❤';
+        h.style.position = 'absolute';
+        h.style.left = x + 'px';
+        h.style.top = y + 'px';
+        h.style.pointerEvents = 'none';
+        h.style.zIndex = 4;
+        h.style.fontSize = (18 + Math.random() * 10) + 'px';
+        h.style.lineHeight = '1';
+        h.style.opacity = '0.96';
+        h.style.color = index % 2 ? '#ff8db7' : '#ffc57a';
+        h.style.textShadow = '0 10px 22px rgba(0,0,0,0.22)';
+        h.style.transform = 'translate(-50%, -50%) scale(0.95)';
+        document.body.appendChild(h);
+
+        var dx = (Math.random() - 0.5) * 40;
+        var dy = 120 + Math.random() * 90;
+        var rotate = (Math.random() > 0.5 ? 1 : -1) * (12 + Math.random() * 18);
+        var duration = 900 + Math.random() * 350;
+
+        h.animate([
+            { transform: 'translate(-50%, -50%) scale(1) rotate(0deg)', opacity: 1 },
+            { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(0.7) rotate(' + rotate + 'deg)', opacity: 0 }
+        ], { duration: duration, easing: 'cubic-bezier(.22,.78,.38,1)' });
+
+        setTimeout(function(){ h.remove(); }, duration + 80);
+    }
+
     loveEl.addEventListener('click', function(e){
         if(popping) return;
         popping = true;
-        loveEl.style.transform = 'translate(-50%, -50%) scale(1.18)';
-        loveEl.style.filter = 'brightness(1.15)';
+        loveEl.style.transform = 'translate(-50%, -50%) scale(1.16)';
+        loveEl.style.filter = 'brightness(1.17)';
         setTimeout(function(){ loveEl.style.transform = 'translate(-50%, -50%) scale(1)'; loveEl.style.filter = ''; popping = false; }, 280);
+
         // small colored dots burst
-        var burst = 18;
+        var burst = 16;
         for(var i=0;i<burst;i++){
             (function(){
                 var d = document.createElement('div');
                 d.style.position = 'absolute';
                 d.style.width = d.style.height = (4 + Math.random()*6) + 'px';
                 d.style.borderRadius = '50%';
-                var hue = ~~(Math.random()*360);
-                d.style.background = 'hsl(' + hue + ' 80% 60%)';
+                var hue = 330 + ~~(Math.random()*60);
+                d.style.background = 'hsl(' + hue + ' 88% 64%)';
                 d.style.left = (e.clientX - 6) + 'px';
                 d.style.top = (e.clientY - 6) + 'px';
                 d.style.pointerEvents = 'none';
@@ -206,6 +259,12 @@ loop();
                 ], { duration: 900 + Math.random()*400, easing: 'cubic-bezier(.2,.8,.2,1)' });
                 setTimeout(function(){ d.remove(); }, 1500);
             })();
+        }
+
+        // falling hearts effect
+        var hearts = 3 + ~~(Math.random() * 2);
+        for(var j = 0; j < hearts; j++) {
+            createFallingHeart(e.clientX, e.clientY, j);
         }
     });
 })();
