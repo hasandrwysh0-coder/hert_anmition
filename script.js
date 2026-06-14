@@ -150,6 +150,46 @@ var loop = function () {
 loop();
 };
 
+// --- interactive text pulse and small particles ---
+(function(){
+    var loveEl = document.querySelector('.love');
+    if(!loveEl) return;
+    var popping = false;
+    loveEl.style.transition = 'transform .28s ease, filter .28s ease';
+    loveEl.addEventListener('click', function(e){
+        if(popping) return;
+        popping = true;
+        loveEl.style.transform = 'translate(-50%, -50%) scale(1.18)';
+        loveEl.style.filter = 'brightness(1.15)';
+        setTimeout(function(){ loveEl.style.transform = 'translate(-50%, -50%) scale(1)'; loveEl.style.filter = ''; popping = false; }, 280);
+        // small colored dots burst
+        var burst = 18;
+        for(var i=0;i<burst;i++){
+            (function(){
+                var d = document.createElement('div');
+                d.style.position = 'absolute';
+                d.style.width = d.style.height = (4 + Math.random()*6) + 'px';
+                d.style.borderRadius = '50%';
+                var hue = ~~(Math.random()*360);
+                d.style.background = 'hsl(' + hue + ' 80% 60%)';
+                d.style.left = (e.clientX - 6) + 'px';
+                d.style.top = (e.clientY - 6) + 'px';
+                d.style.pointerEvents = 'none';
+                d.style.zIndex = 3;
+                d.style.opacity = 1;
+                document.body.appendChild(d);
+                var dx = (Math.random() - 0.5) * 220;
+                var dy = (Math.random() - 0.7) * 180 - 20;
+                d.animate([
+                    { transform: 'translate(0,0) scale(1)', opacity: 1 },
+                    { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(.6)', opacity: 0 }
+                ], { duration: 900 + Math.random()*400, easing: 'cubic-bezier(.2,.8,.2,1)' });
+                setTimeout(function(){ d.remove(); }, 1500);
+            })();
+        }
+    });
+})();
+
 var s = document.readyState;
 if (s === 'complete' || s === 'loaded' || s === 'interactive') init();
 else document.addEventListener('DOMContentLoaded', init, false);
