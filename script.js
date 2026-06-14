@@ -37,6 +37,9 @@ canvas.style.height = cssHeight + 'px';
 canvas.width = Math.round(cssWidth * DPR);
 canvas.height = Math.round(cssHeight * DPR);
 ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+ctx.imageSmoothingEnabled = false;
+ctx.webkitImageSmoothingEnabled = false;
+ctx.mozImageSmoothingEnabled = false;
 var width = cssWidth;
 var height = cssHeight;
 var rand = Math.random;
@@ -63,12 +66,15 @@ window.addEventListener('resize', function () {
     canvas.width = Math.round(cssWidth * DPR);
     canvas.height = Math.round(cssHeight * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    ctx.webkitImageSmoothingEnabled = false;
+    ctx.mozImageSmoothingEnabled = false;
     width = cssWidth;
     height = cssHeight;
-    traceCount = mobile ? 10 : 18;
-    pointStep = mobile ? 0.10 : 0.08;
-    heartScale = mobile ? 0.48 : 0.26;
-    heartHeightFactor = mobile ? 0.16 : 0.11;
+    traceCount = mobile ? 14 : 18;
+    pointStep = mobile ? 0.09 : 0.08;
+    heartScale = mobile ? 0.54 : 0.26;
+    heartHeightFactor = mobile ? 0.17 : 0.11;
     ctx.fillStyle = "rgba(0,0,0,1)";
     ctx.fillRect(0, 0, width, height);
     buildHeartPoints();
@@ -79,9 +85,9 @@ window.addEventListener('resize', function () {
 var traceCount = mobile ? 10 : 18;
 var pointsOrigin = [];
 var i;
-var pointStep = mobile ? 0.10 : 0.08;
-var heartScale = mobile ? 0.48 : 0.26;
-var heartHeightFactor = mobile ? 0.16 : 0.11;
+var pointStep = mobile ? 0.09 : 0.08;
+var heartScale = mobile ? 0.54 : 0.26;
+var heartHeightFactor = mobile ? 0.17 : 0.11;
 
 function buildHeartPoints() {
     pointsOrigin = [];
