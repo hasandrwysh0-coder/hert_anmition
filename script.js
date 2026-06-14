@@ -75,8 +75,8 @@ var traceCount = mobile ? 6 : 18;
 var pointsOrigin = [];
 var i;
 var pointStep = mobile ? 0.14 : 0.08;
-var heartScale = mobile ? 0.18 : 0.26;
-var heartHeightFactor = mobile ? 0.09 : 0.085;
+var heartScale = mobile ? 0.24 : 0.42;
+var heartHeightFactor = mobile ? 0.12 : 0.115;
 
 function buildHeartPoints() {
     pointsOrigin = [];
@@ -135,8 +135,8 @@ var loop = function () {
     ctx.fillStyle = "rgba(0,0,0,.16)";
     ctx.fillRect(0, 0, width, height);
     var glow = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, height * 0.45);
-    glow.addColorStop(0, 'rgba(170, 16, 24, 0.14)');
-    glow.addColorStop(0.55, 'rgba(0, 0, 0, 0)');
+    glow.addColorStop(0, 'rgba(147, 14, 21, 0)');
+    glow.addColorStop(0.55, 'rgba(178, 21, 21, 0)');
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, width, height);
     ctx.globalCompositeOperation = 'source-over';
