@@ -26,12 +26,12 @@ body {
 .love {
   position: absolute;
   left: 50%;
-  top: 2%;
+  top: 10%;
   color: #ff4b4b;
   transform: translate(-50%, -50%);
   z-index: 999;
   font-weight: 900;
-  font-size: clamp(48px, 10vw, 130px);
+  font-size: clamp(56px, 12vw, 150px);
   animation: beat 1.08s ease-in-out infinite;
   display: inline-block;
   white-space: nowrap; /* keep words together */
@@ -41,6 +41,14 @@ body {
   border-radius: 18px;
   cursor: pointer;
   letter-spacing: 0.02em;
+}
+
+@media (max-width: 768px) {
+  .love {
+    font-size: clamp(60px, 18vw, 120px);
+    top: 12%;
+    padding: 12px 18px;
+  }
 }
 
 .love .big { font-size: 0.72em; margin-right: 14px; display: inline-block; vertical-align: middle; }

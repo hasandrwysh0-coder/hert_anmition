@@ -25,7 +25,7 @@ var loaded = false;
 var init = function () {
 if (loaded) return;
 loaded = true;
-var mobile = window.isDevice;
+var mobile = window.isDevice || innerWidth <= 900;
 // scale canvas for high-DPI (retina) displays to avoid blurriness on mobile
 var DPR = window.devicePixelRatio || 1;
 var canvas = document.getElementById('heart');
@@ -34,8 +34,8 @@ var cssWidth = innerWidth;
 var cssHeight = innerHeight;
 canvas.style.width = cssWidth + 'px';
 canvas.style.height = cssHeight + 'px';
-canvas.width = Math.floor(cssWidth * DPR);
-canvas.height = Math.floor(cssHeight * DPR);
+canvas.width = Math.round(cssWidth * DPR);
+canvas.height = Math.round(cssHeight * DPR);
 ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 var width = cssWidth;
 var height = cssHeight;
@@ -59,8 +59,8 @@ window.addEventListener('resize', function () {
     cssHeight = innerHeight;
     canvas.style.width = cssWidth + 'px';
     canvas.style.height = cssHeight + 'px';
-    canvas.width = Math.floor(cssWidth * DPR);
-    canvas.height = Math.floor(cssHeight * DPR);
+    canvas.width = Math.round(cssWidth * DPR);
+    canvas.height = Math.round(cssHeight * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     width = cssWidth;
     height = cssHeight;
@@ -71,12 +71,12 @@ window.addEventListener('resize', function () {
 });
 
 // heart detail and density
-var traceCount = mobile ? 6 : 18;
+var traceCount = mobile ? 8 : 20;
 var pointsOrigin = [];
 var i;
-var pointStep = mobile ? 0.14 : 0.08;
-var heartScale = mobile ? 0.24 : 0.42;
-var heartHeightFactor = mobile ? 0.12 : 0.115;
+var pointStep = mobile ? 0.12 : 0.07;
+var heartScale = mobile ? 0.32 : 0.52;
+var heartHeightFactor = mobile ? 0.14 : 0.12;
 
 function buildHeartPoints() {
     pointsOrigin = [];
