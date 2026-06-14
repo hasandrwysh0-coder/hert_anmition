@@ -68,7 +68,8 @@ window.addEventListener('resize', function () {
     ctx.fillRect(0, 0, width, height);
 });
 
-var traceCount = mobile ? 20 : 50;
+// fewer trace points on mobile for clarity and performance
+var traceCount = mobile ? 12 : 50;
 var pointsOrigin = [];
 var i;
 var dr = mobile ? 0.3 : 0.1;
@@ -96,7 +97,8 @@ for (i = 0; i < heartPointsCount; i++) {
     e[i] = {
         vx: 0,
         vy: 0,
-        R: 2,
+        // particle visual radius (in CSS pixels)
+        R: mobile ? (1.6 + Math.min(1, DPR - 1)) : 1.2,
         speed: rand() + 5,
         q: ~~(rand() * heartPointsCount),
         D: 2 * (i % 2) - 1,
@@ -154,7 +156,10 @@ var loop = function () {
         }
         ctx.fillStyle = u.f;
         for (k = 0; k < u.trace.length; k++) {
-            ctx.fillRect(u.trace[k].x, u.trace[k].y, 1, 1);
+            var px = u.trace[k].x;
+            var py = u.trace[k].y;
+            var size = Math.max(1, Math.round(u.R));
+            ctx.fillRect(px - size / 2, py - size / 2, size, size);
         }
     }
     //ctx.fillStyle = "rgba(255,255,255,1)";
