@@ -57,6 +57,7 @@ var scaleAndTranslate = function (pos, sx, sy, dx, dy) {
 window.addEventListener('resize', function () {
     cssWidth = innerWidth;
     cssHeight = innerHeight;
+    mobile = window.isDevice || innerWidth <= 900;
     canvas.style.width = cssWidth + 'px';
     canvas.style.height = cssHeight + 'px';
     canvas.width = Math.round(cssWidth * DPR);
@@ -64,6 +65,10 @@ window.addEventListener('resize', function () {
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     width = cssWidth;
     height = cssHeight;
+    traceCount = mobile ? 10 : 18;
+    pointStep = mobile ? 0.10 : 0.08;
+    heartScale = mobile ? 0.48 : 0.26;
+    heartHeightFactor = mobile ? 0.16 : 0.11;
     ctx.fillStyle = "rgba(0,0,0,1)";
     ctx.fillRect(0, 0, width, height);
     buildHeartPoints();
@@ -71,12 +76,12 @@ window.addEventListener('resize', function () {
 });
 
 // heart detail and density
-var traceCount = mobile ? 8 : 20;
+var traceCount = mobile ? 10 : 18;
 var pointsOrigin = [];
 var i;
-var pointStep = mobile ? 0.12 : 0.07;
-var heartScale = mobile ? 0.32 : 0.52;
-var heartHeightFactor = mobile ? 0.14 : 0.12;
+var pointStep = mobile ? 0.10 : 0.08;
+var heartScale = mobile ? 0.48 : 0.26;
+var heartHeightFactor = mobile ? 0.16 : 0.11;
 
 function buildHeartPoints() {
     pointsOrigin = [];
