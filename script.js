@@ -82,12 +82,12 @@ window.addEventListener('resize', function () {
 });
 
 // heart detail and density
-var traceCount = mobile ? 10 : 18;
+var traceCount = mobile ? 12 : 18;
 var pointsOrigin = [];
 var i;
-var pointStep = mobile ? 0.09 : 0.08;
-var heartScale = mobile ? 0.54 : 0.26;
-var heartHeightFactor = mobile ? 0.17 : 0.11;
+var pointStep = mobile ? 0.1 : 0.08;
+var heartScale = mobile ? 0.34 : 0.26;
+var heartHeightFactor = mobile ? 0.14 : 0.11;
 
 function buildHeartPoints() {
     pointsOrigin = [];
@@ -151,6 +151,10 @@ var loop = function () {
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, width, height);
     ctx.globalCompositeOperation = 'source-over';
+    if (mobile) {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+      ctx.fillRect(0, 0, width, height);
+    }
     for (i = e.length; i--;) {
         var u = e[i];
         var q = targetPoints[u.q];
