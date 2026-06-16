@@ -86,8 +86,8 @@ var traceCount = mobile ? 12 : 18;
 var pointsOrigin = [];
 var i;
 var pointStep = mobile ? 0.1 : 0.08;
-var heartScale = mobile ? 0.34 : 0.26;
-var heartHeightFactor = mobile ? 0.14 : 0.11;
+var heartScale = mobile ? 0.26 : 0.26;
+var heartHeightFactor = mobile ? 0.12 : 0.11;
 
 function buildHeartPoints() {
     pointsOrigin = [];

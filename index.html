@@ -49,12 +49,14 @@ body {
 
 @media (max-width: 1024px) {
   .love {
-    font-size: clamp(44px, 14vw, 92px);
+    font-size: clamp(34px, 12vw, 68px);
     top: 2%;
-    padding: 10px 16px;
-    text-shadow: 0 12px 30px rgba(255, 68, 68, 0.32), 0 6px 16px rgba(0, 0, 0, 0.18);
-    filter: drop-shadow(0 0 0.35rem rgba(212, 46, 46, 0.24));
+    padding: 8px 12px;
+    text-shadow: 0 12px 30px rgba(255, 68, 68, 0.34), 0 6px 16px rgba(0, 0, 0, 0.2);
+    filter: drop-shadow(0 0 0.32rem rgba(212, 46, 46, 0.26));
   }
+  .love::before,
+  .love::after { font-size: 18px; }
 }
 
 @media (min-width: 1200px) {
